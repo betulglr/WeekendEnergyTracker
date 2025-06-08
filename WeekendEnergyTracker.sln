@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36202.13 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WeekendEnergyTracker", "WeekendEnergyTracker\WeekendEnergyTracker.csproj", "{A8210961-51EC-449A-8CC2-0617C74B855C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A8210961-51EC-449A-8CC2-0617C74B855C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A8210961-51EC-449A-8CC2-0617C74B855C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A8210961-51EC-449A-8CC2-0617C74B855C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A8210961-51EC-449A-8CC2-0617C74B855C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D05C9EDB-B8E9-491A-A62E-1106604FC0FA}
+	EndGlobalSection
+EndGlobal

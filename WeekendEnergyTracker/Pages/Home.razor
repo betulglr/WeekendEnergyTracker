@@ -1,0 +1,102 @@
+﻿@page "/"
+
+@using System.ComponentModel.DataAnnotations
+
+<h3>Weekend Energy Tracker</h3>
+
+<p>Log your weekend hours spent in each category.</p>
+
+<div class="day-log">
+    <h4>Saturday</h4>
+    @foreach (var category in Categories)
+    {
+        <label>@category</label>    
+        <input type="range" min="0" max="24" @bind="SaturdayHours[category]" />
+        <span>@SaturdayHours[category] hrs</span>
+    }
+    <p><b>Total:</b> @GetTotalHours(SaturdayHours) hrs</p>
+</div>
+
+<div class="day-log">
+    <h4>Sunday</h4>
+    @foreach (var category in Categories)
+    {
+        <label>@category</label>    
+        <input type="range" min="0" max="24" @bind="SundayHours[category]" />
+        <span>@SundayHours[category] hrs</span>
+    }
+    <p><b>Total:</b> @GetTotalHours(SundayHours) hrs</p>
+    }
+</div>
+
+<button @onclick="ShowMoodSummary">Show Mood Summary</button>
+
+@if (!string.IsNullOrEmpty(MoodSummary))
+{
+    <div class="mood-summary">
+        <h4>Mood Summary:</h4>
+        <p>@MoodSummary</p>
+    </div>    
+}
+
+@code {
+    private string[] Categories = new[] { "Creative", "Rest", "Social", "Errands" };
+
+    private Dictionary<string, int> SaturdayHours = new();
+    private Dictionary<string, int> SundayHours = new();
+
+    private string MoodSummary;
+
+    protected override void OnInitialized()
+    {
+        foreach (var cat in Categories)
+        {
+            SaturdayHours[cat] = 0;
+            SundayHours[cat] = 0;
+        }
+    }
+
+    private int GetTotalHours(Dictionary<string, int> hoursDict)
+    {
+        return hoursDict.Values.Sum();
+    }
+
+    private void ShowMoodSummary()
+    {
+        int totalSat = GetTotalHours(SaturdayHours);
+        int totalSun = GetTotalHours(SundayHours);
+        int total = totalSat + totalSun;
+
+        if (total == 0)
+        {
+            MoodSummary = "Please log some hours first.";
+            return;
+        }
+
+        //Calculate mood based on hours logged
+        var combined = new Dictionary<string, int>();
+        foreach (var cat in Categories)
+        {
+            combined[cat] = SaturdayHours[cat] + SundayHours[cat];
+        }
+
+        var percentages = combined.ToDictionary(kv => kv.Key, kv => (double)kv.Value / total * 100);
+
+        // simple mood rules
+        if (percentages["Rest"] > 50)
+            MoodSummary = "Cozy Recharge: You prioritized rest and recovery.";
+
+        else if (percentages["Creative"] > 40)
+            MoodSummary = "Flow Mode: You spent a lot of time being creative.";
+
+        else if (percentages["Social"] > 40)
+            MoodSummary = "Sparked Up: Social connections fueled your weekend.";
+
+        else if (percentages["Creative"] + percentages["Rest"] > 70)
+            MoodSummary = "Chill Creator: A balanced weekend of creativity and rest.";
+
+        else
+            MoodSummary = "Scattered Energy: Your weekend was quite varied.";
+    }
+
+}

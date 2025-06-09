@@ -1,102 +1,91 @@
 ﻿@page "/"
 
-@using System.ComponentModel.DataAnnotations
-
 <h3>Weekend Energy Tracker</h3>
 
-<p>Log your weekend hours spent in each category.</p>
+<datalist id="hourMarks">
+    @for (int i = 0; i <= 24; i++)
+    {
+        <option value="@i"></option>
+    }
+</datalist>
 
 <div class="day-log">
     <h4>Saturday</h4>
-    @foreach (var category in Categories)
+    @foreach (var cat in Categories)
     {
-        <label>@category</label>    
-        <input type="range" min="0" max="24" @bind="SaturdayHours[category]" />
-        <span>@SaturdayHours[category] hrs</span>
+        <label>@cat</label>
+        <input type="range"
+               min="0" max="24" step="1"
+               list="hourMarks"
+               @bind="SaturdayHours[cat]" />
+        <span>@SaturdayHours[cat] hrs</span>
     }
     <p><b>Total:</b> @GetTotalHours(SaturdayHours) hrs</p>
 </div>
 
 <div class="day-log">
     <h4>Sunday</h4>
-    @foreach (var category in Categories)
+    @foreach (var cat in Categories)
     {
-        <label>@category</label>    
-        <input type="range" min="0" max="24" @bind="SundayHours[category]" />
-        <span>@SundayHours[category] hrs</span>
+        <label>@cat</label>
+        <input type="range"
+               min="0" max="24" step="1"
+               list="hourMarks"
+               @bind="SundayHours[cat]" />
+        <span>@SundayHours[cat] hrs</span>
     }
     <p><b>Total:</b> @GetTotalHours(SundayHours) hrs</p>
-    }
 </div>
 
 <button @onclick="ShowMoodSummary">Show Mood Summary</button>
-
 @if (!string.IsNullOrEmpty(MoodSummary))
 {
     <div class="mood-summary">
-        <h4>Mood Summary:</h4>
+        <h4>Your Mood Summary:</h4>
         <p>@MoodSummary</p>
-    </div>    
+    </div>
 }
 
 @code {
-    private string[] Categories = new[] { "Creative", "Rest", "Social", "Errands" };
-
+    private string[] Categories = { "Creative", "Rest", "Social", "Errands" };
     private Dictionary<string, int> SaturdayHours = new();
     private Dictionary<string, int> SundayHours = new();
-
     private string MoodSummary;
 
     protected override void OnInitialized()
     {
-        foreach (var cat in Categories)
+        foreach (var c in Categories)
         {
-            SaturdayHours[cat] = 0;
-            SundayHours[cat] = 0;
+            SaturdayHours[c] = 0;
+            SundayHours[c] = 0;
         }
     }
 
-    private int GetTotalHours(Dictionary<string, int> hoursDict)
-    {
-        return hoursDict.Values.Sum();
-    }
+    private int GetTotalHours(Dictionary<string, int> d)
+      => d.Values.Sum();
 
     private void ShowMoodSummary()
     {
-        int totalSat = GetTotalHours(SaturdayHours);
-        int totalSun = GetTotalHours(SundayHours);
-        int total = totalSat + totalSun;
-
+        var total = GetTotalHours(SaturdayHours) + GetTotalHours(SundayHours);
         if (total == 0)
         {
             MoodSummary = "Please log some hours first.";
             return;
         }
+        var combined = Categories.ToDictionary(
+          cat => cat,
+          cat => SaturdayHours[cat] + SundayHours[cat]
+        );
+        var pct = combined.ToDictionary(
+          kv => kv.Key,
+          kv => (double)kv.Value / total * 100
+        );
 
-        //Calculate mood based on hours logged
-        var combined = new Dictionary<string, int>();
-        foreach (var cat in Categories)
-        {
-            combined[cat] = SaturdayHours[cat] + SundayHours[cat];
-        }
-
-        var percentages = combined.ToDictionary(kv => kv.Key, kv => (double)kv.Value / total * 100);
-
-        // simple mood rules
-        if (percentages["Rest"] > 50)
-            MoodSummary = "Cozy Recharge: You prioritized rest and recovery.";
-
-        else if (percentages["Creative"] > 40)
-            MoodSummary = "Flow Mode: You spent a lot of time being creative.";
-
-        else if (percentages["Social"] > 40)
-            MoodSummary = "Sparked Up: Social connections fueled your weekend.";
-
-        else if (percentages["Creative"] + percentages["Rest"] > 70)
-            MoodSummary = "Chill Creator: A balanced weekend of creativity and rest.";
-
-        else
-            MoodSummary = "Scattered Energy: Your weekend was quite varied.";
+        if (pct["Rest"] > 50) MoodSummary = "🛌 Cozy Recharge: You prioritized rest.";
+        else if (pct["Creative"] > 40) MoodSummary = "🎨 Flow Mode: You spent a lot of time being creative.";
+        else if (pct["Social"] > 40) MoodSummary = "💬 Sparked Up: Social connections fueled your weekend.";
+        else if (pct["Creative"] + pct["Rest"] > 70)
+            MoodSummary = "🌙 Chill Creator: Creativity + rest in harmony.";
+        else MoodSummary = "⚠️ Scattered Energy: Your weekend was varied.";
     }
-
 }

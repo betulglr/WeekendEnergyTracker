@@ -1,6 +1,19 @@
 ﻿@page "/"
 
-<h3>Weekend Energy Tracker</h3>
+@* Intro *@
+@if (!started)
+{
+    <div class="intro-screen">
+        <h1 class="app-title">Weekend Energy Tracker</h1>
+        <button class="btn btn-primary btn-lg" @onclick="() => started = true">Start</button>
+    </div>
+}
+else
+{
+    <div class="container py-4 main-ui">
+
+
+
 
 <datalist id="hourMarks">
     @for (int i = 0; i <= 24; i++)
@@ -46,7 +59,12 @@
     </div>
 }
 
+ </div>
+ }
+
 @code {
+    private bool started = false;
+
     private string[] Categories = { "Creative", "Rest", "Social", "Errands" };
     private Dictionary<string, int> SaturdayHours = new();
     private Dictionary<string, int> SundayHours = new();

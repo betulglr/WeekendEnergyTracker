@@ -1,5 +1,6 @@
 ﻿@page "/"
 
+
 @* Intro *@
 @if (!started)
 {
@@ -13,55 +14,61 @@ else
     <div class="container py-4 main-ui">
 
 
+<div class="row mb-4">
+  <div class="col-12"><h4>Saturday</h4></div>
 
-
-<datalist id="hourMarks">
-    @for (int i = 0; i <= 24; i++)
-    {
-        <option value="@i"></option>
-    }
-</datalist>
-
-<div class="day-log">
-    <h4>Saturday</h4>
-    @foreach (var cat in Categories)
-    {
-        <label>@cat</label>
-        <input type="range"
-               min="0" max="24" step="1"
-               list="hourMarks"
-               @bind="SaturdayHours[cat]" />
-        <span>@SaturdayHours[cat] hrs</span>
-    }
-    <p><b>Total:</b> @GetTotalHours(SaturdayHours) hrs</p>
+  @foreach(var cat in Categories)
+  {
+    <div class="col-6 col-md-3 text-center">
+      <RadzenKnob 
+        TValue="int"
+        Min="0" Max="24" Step="1"
+        Value="@SaturdayHours[cat]"
+        Change="@( (int val) => SaturdayHours[cat] = val )"
+        Style="width:80px; height:80px;" />
+      <div class="mt-2">
+        <strong>@cat</strong><br />
+        @SaturdayHours[cat] hrs
+      </div>
+    </div>
+  }
 </div>
 
-<div class="day-log">
-    <h4>Sunday</h4>
-    @foreach (var cat in Categories)
-    {
-        <label>@cat</label>
-        <input type="range"
-               min="0" max="24" step="1"
-               list="hourMarks"
-               @bind="SundayHours[cat]" />
-        <span>@SundayHours[cat] hrs</span>
-    }
-    <p><b>Total:</b> @GetTotalHours(SundayHours) hrs</p>
+
+<div class="row mb-4">
+  <div class="col-12"><h4>Sunday</h4></div>
+
+  @foreach(var cat in Categories)
+  {
+    <div class="col-6 col-md-3 text-center">
+      <RadzenKnob 
+        TValue="int"
+        Min="0" Max="24" Step="1"
+        Value="@SundayHours[cat]"
+        Change="@( (int val) => SundayHours[cat] = val )"
+        Style="width:80px; height:80px;" />
+      <div class="mt-2">
+        <strong>@cat</strong><br />
+        @SundayHours[cat] hrs
+      </div>
+    </div>
+  }
 </div>
 
-<button @onclick="ShowMoodSummary">Show Mood Summary</button>
-@if (!string.IsNullOrEmpty(MoodSummary))
-{
-    <div class="mood-summary">
-        <h4>Your Mood Summary:</h4>
-        <p>@MoodSummary</p>
+
+
+        <button class="btn btn-success w-100" @onclick="ShowMoodSummary">
+            Show Mood Summary
+        </button>
+
+        @if (!string.IsNullOrEmpty(MoodSummary))
+        {
+            <div class="alert alert-info text-center mt-4">
+                @MoodSummary
+            </div>
+        }
     </div>
 }
-
- </div>
- }
-
 @code {
     private bool started = false;
 

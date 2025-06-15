@@ -1,5 +1,6 @@
 ﻿@page "/"
-
+@using Radzen
+@using Radzen.Blazor
 
 @* Intro *@
 @if (!started)
@@ -20,7 +21,7 @@ else
   @foreach(var cat in Categories)
   {
     <div class="col-6 col-md-3 text-center">
-      <RadzenKnob 
+      <Radzen.Blazor.RadzenKnob 
         TValue="int"
         Min="0" Max="24" Step="1"
         Value="@SaturdayHours[cat]"

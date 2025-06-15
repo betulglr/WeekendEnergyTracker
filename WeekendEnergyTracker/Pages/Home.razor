@@ -5,19 +5,20 @@
 @* Intro *@
 @if (!started)
 {
-    <div class="intro-screen">
-        <h1 class="app-title">Weekend Energy Tracker</h1>
-        <button class="btn btn-primary btn-lg" @onclick="() => started = true">Start</button>
-    </div>
+	<div class="intro-screen">
+		<h1 class="app-title">Weekend Energy Tracker</h1>
+		<button class="btn btn-primary btn-lg" @onclick="() => started = true">Start</button>
+	</div>
 }
 else
 {
-    <div class="container py-4 main-ui">
 
 
-<div class="row mb-4">
-  <div class="col-12"><h4>Saturday</h4></div>
+	<div class="container py-4 main-ui">
+		<div class="row mb-4">
+			<div class="col-12"><h4>Saturday</h4></div>
 
+<<<<<<< HEAD
   @foreach(var cat in Categories)
   {
     <div class="col-6 col-md-3 text-center">
@@ -34,84 +35,112 @@ else
     </div>
   }
 </div>
+=======
+			@foreach (var cat in Categories)
+			{
+				<div class="col-6 col-md-3 mb-3">
+					<div class="text-center mb-1">
+						<strong>@cat</strong>
+					</div>
+
+					<div class="input-group">
+						<button class="btn btn-outline-secondary"
+								@onclick="() => SaturdayHours[cat] = Math.Max(0, SaturdayHours[cat] - 1)">
+							−
+						</button>
+						<input class="form-control text-center" readonly
+							   value="@($"{SaturdayHours[cat]} hrs")" />
+						<button class="btn btn-outline-secondary"
+								@onclick="() => SaturdayHours[cat] = Math.Min(24, SaturdayHours[cat] + 1)">
+							+
+						</button>
+					</div>
+				</div>
+			}
+		</div>
+>>>>>>> ae70de56ab4a02ae848e1c055cc7acc3546654d9
 
 
-<div class="row mb-4">
-  <div class="col-12"><h4>Sunday</h4></div>
+		<div class="row mb-4">
+			<div class="col-12"><h4>Sunday</h4></div>
 
-  @foreach(var cat in Categories)
-  {
-    <div class="col-6 col-md-3 text-center">
-      <RadzenKnob 
-        TValue="int"
-        Min="0" Max="24" Step="1"
-        Value="@SundayHours[cat]"
-        Change="@( (int val) => SundayHours[cat] = val )"
-        Style="width:80px; height:80px;" />
-      <div class="mt-2">
-        <strong>@cat</strong><br />
-        @SundayHours[cat] hrs
-      </div>
-    </div>
-  }
-</div>
+			@foreach (var cat in Categories)
+			{
+				<div class="col-6 col-md-3 mb-3">
+					<div class="text-center mb-1">
+						<strong>@cat</strong>
+					</div>
 
+					<div class="input-group">
+						<button class="btn btn-outline-secondary"
+								@onclick="() => SundayHours[cat] = Math.Max(0, SundayHours[cat] - 1)">
+							−
+						</button>
+						<input class="form-control text-center" readonly
+							   value="@($"{SundayHours[cat]} hrs")" />
+						<button class="btn btn-outline-secondary"
+								@onclick="() => SundayHours[cat] = Math.Min(24, SundayHours[cat] + 1)">
+							+
+						</button>
+					</div>
+				</div>
+			}
+		</div>
 
+		<button class="btn btn-success w-100" @onclick="ShowMoodSummary">
+			Show Mood Summary
+		</button>
 
-        <button class="btn btn-success w-100" @onclick="ShowMoodSummary">
-            Show Mood Summary
-        </button>
-
-        @if (!string.IsNullOrEmpty(MoodSummary))
-        {
-            <div class="alert alert-info text-center mt-4">
-                @MoodSummary
-            </div>
-        }
-    </div>
+		@if (!string.IsNullOrEmpty(MoodSummary))
+		{
+			<div class="alert alert-info text-center mt-4">
+				@MoodSummary
+			</div>
+		}
+	</div>
 }
 @code {
-    private bool started = false;
+	private bool started = false;
 
-    private string[] Categories = { "Creative", "Rest", "Social", "Errands" };
-    private Dictionary<string, int> SaturdayHours = new();
-    private Dictionary<string, int> SundayHours = new();
-    private string MoodSummary;
+	private string[] Categories = { "Creative", "Rest", "Social", "Errands" };
+	private Dictionary<string, int> SaturdayHours = new();
+	private Dictionary<string, int> SundayHours = new();
+	private string MoodSummary;
 
-    protected override void OnInitialized()
-    {
-        foreach (var c in Categories)
-        {
-            SaturdayHours[c] = 0;
-            SundayHours[c] = 0;
-        }
-    }
+	protected override void OnInitialized()
+	{
+		foreach (var c in Categories)
+		{
+			SaturdayHours[c] = 0;
+			SundayHours[c] = 0;
+		}
+	}
 
-    private int GetTotalHours(Dictionary<string, int> d)
-      => d.Values.Sum();
+	private int GetTotalHours(Dictionary<string, int> d)
+			=> d.Values.Sum();
 
-    private void ShowMoodSummary()
-    {
-        var total = GetTotalHours(SaturdayHours) + GetTotalHours(SundayHours);
-        if (total == 0)
-        {
-            MoodSummary = "Please log some hours first.";
-            return;
-        }
-        var combined = Categories.ToDictionary(
-          cat => cat,
-          cat => SaturdayHours[cat] + SundayHours[cat]
-        );
-        var pct = combined.ToDictionary(
-          kv => kv.Key,
-          kv => (double)kv.Value / total * 100
-        );
+	private void ShowMoodSummary()
+	{
+		var total = GetTotalHours(SaturdayHours) + GetTotalHours(SundayHours);
+		if (total == 0)
+		{
+			MoodSummary = "Please log some hours first.";
+			return;
+		}
+		var combined = Categories.ToDictionary(
+				cat => cat,
+				cat => SaturdayHours[cat] + SundayHours[cat]
+		);
+		var pct = combined.ToDictionary(
+				kv => kv.Key,
+				kv => (double)kv.Value / total * 100
+		);
 
-        if (pct["Rest"] > 50) MoodSummary = "🛌 Cozy Recharge: You prioritized rest.";
-        else if (pct["Creative"] > 40) MoodSummary = "🎨 Flow Mode: You spent a lot of time being creative.";
-        else if (pct["Social"] > 40) MoodSummary = "💬 Sparked Up: Social connections fueled your weekend.";
-        else if (pct["Creative"] + pct["Rest"] > 70)
-            MoodSummary = "🌙 Chill Creator: Creativity + rest in harmony.";
-        else MoodSummary = "⚠️ Scattered Energy: Your weekend was varied.";
-    }
+		if (pct["Rest"] > 50) MoodSummary = "🛌 Cozy Recharge: You prioritized rest.";
+		else if (pct["Creative"] > 40) MoodSummary = "🎨 Flow Mode: You spent a lot of time being creative.";
+		else if (pct["Social"] > 40) MoodSummary = "💬 Sparked Up: Social connections fueled your weekend.";
+		else if (pct["Creative"] + pct["Rest"] > 70)
+			MoodSummary = "🌙 Chill Creator: Creativity + rest in harmony.";
+		else MoodSummary = "⚠️ Scattered Energy: Your weekend was varied.";
+	}
 }
